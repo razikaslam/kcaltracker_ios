@@ -352,10 +352,184 @@ struct FoodView: View {
     }
 }
 
-struct AddFoodView: View { @Environment(\.dismiss) var dismiss; @EnvironmentObject var store:AppStore; let date:Date; @State private var name=""; @State private var meal="Breakfast"; @State private var kcal=""; @State private var protein=""; @State private var carbs=""; @State private var fat=""; @State private var fiber=""; var body:some View{NavigationStack{Form{TextField("Food name",text:$name);Picker("Meal",selection:$meal){ForEach(["Breakfast","Lunch","Dinner","Snack"],id:\.self,content:Text.init)};TextField("Calories",text:$kcal).keyboardType(.decimalPad);TextField("Protein (g)",text:$protein).keyboardType(.decimalPad);TextField("Carbs (g)",text:$carbs).keyboardType(.decimalPad);TextField("Fat (g)",text:$fat).keyboardType(.decimalPad);TextField("Fiber (g)",text:$fiber).keyboardType(.decimalPad)}.navigationTitle("Add Food").toolbar{ToolbarItem(placement:.cancellationAction){Button("Cancel"){dismiss()}};ToolbarItem(placement:.confirmationAction){Button("Save"){Task{await store.addFood(name:name,meal:meal,date:date,calories:Double(kcal) ?? 0,protein:Double(protein) ?? 0,carbs:Double(carbs) ?? 0,fat:Double(fat) ?? 0,fiber:Double(fiber) ?? 0);dismiss()}}.disabled(name.isEmpty)}}}}
+struct AddFoodView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: AppStore
+    let date: Date
 
-struct WorkoutView: View { @EnvironmentObject var store:AppStore; @State private var date=Date(); @State private var showAdd=false; var wos:[WorkoutEntry]{store.workouts.filter{Calendar.current.isDate($0.date,inSameDayAs:date)}}; var body:some View{NavigationStack{List{DatePicker("Date",selection:$date,in:.distantPast...Date(),displayedComponents:.date);ForEach(wos){w in HStack{VStack(alignment:.leading){Text(w.type).font(.headline);Text("\(fmt(w.minutes)) min").font(.caption).foregroundStyle(.secondary)};Spacer();Text("\(fmt(w.kcal)) kcal").bold()}.swipeActions{Button(role:.destructive){Task{await store.deleteWorkout(w.id)}}label:{Image(systemName:"trash")}}}}.navigationTitle("Workout").toolbar{ToolbarItem(placement:.topBarTrailing){Button{showAdd=true}label:{Image(systemName:"plus")}}}.sheet(isPresented:$showAdd){AddWorkoutView(date:date)}}}}
-struct AddWorkoutView:View{@Environment(\.dismiss)var dismiss;@EnvironmentObject var store:AppStore;let date:Date;@State private var type="Weight Training";@State private var minutes="";@State private var kcal="";var body:some View{NavigationStack{Form{Picker("Workout",selection:$type){ForEach(["Weight Training","Running","Cycling","Walking","HIIT","Swimming","Yoga","Sports","Other"],id:\.self,content:Text.init)}TextField("Minutes",text:$minutes).keyboardType(.decimalPad);TextField("Calories burned",text:$kcal).keyboardType(.decimalPad)}.navigationTitle("Add Workout").toolbar{ToolbarItem(placement:.cancellationAction){Button("Cancel"){dismiss()}};ToolbarItem(placement:.confirmationAction){Button("Save"){Task{await store.addWorkout(type:type,date:date,minutes:Double(minutes) ?? 0,kcal:Double(kcal) ?? 0);dismiss()}}}}}}
+    @State private var name = ""
+    @State private var meal = "Breakfast"
+    @State private var kcal = ""
+    @State private var protein = ""
+    @State private var carbs = ""
+    @State private var fat = ""
+    @State private var fiber = ""
+
+    private let meals = ["Breakfast", "Lunch", "Dinner", "Snack"]
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                TextField("Food name", text: $name)
+
+                Picker("Meal", selection: $meal) {
+                    ForEach(meals, id: \.self) { item in
+                        Text(item)
+                    }
+                }
+
+                TextField("Calories", text: $kcal)
+                    .keyboardType(.decimalPad)
+                TextField("Protein (g)", text: $protein)
+                    .keyboardType(.decimalPad)
+                TextField("Carbs (g)", text: $carbs)
+                    .keyboardType(.decimalPad)
+                TextField("Fat (g)", text: $fat)
+                    .keyboardType(.decimalPad)
+                TextField("Fiber (g)", text: $fiber)
+                    .keyboardType(.decimalPad)
+            }
+            .navigationTitle("Add Food")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        Task {
+                            await store.addFood(
+                                name: name,
+                                meal: meal,
+                                date: date,
+                                calories: Double(kcal) ?? 0,
+                                protein: Double(protein) ?? 0,
+                                carbs: Double(carbs) ?? 0,
+                                fat: Double(fat) ?? 0,
+                                fiber: Double(fiber) ?? 0
+                            )
+                            dismiss()
+                        }
+                    }
+                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
+    }
+}
+
+struct WorkoutView: View {
+    @EnvironmentObject private var store: AppStore
+    @State private var date = Date()
+    @State private var showAdd = false
+
+    var wos: [WorkoutEntry] {
+        store.workouts.filter { Calendar.current.isDate($0.date, inSameDayAs: date) }
+    }
+
+    var body: some View {
+        NavigationStack {
+            List {
+                DatePicker(
+                    "Date",
+                    selection: $date,
+                    in: .distantPast...Date(),
+                    displayedComponents: .date
+                )
+
+                ForEach(wos) { w in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(w.type)
+                                .font(.headline)
+                            Text("\(fmt(w.minutes)) min")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        Text("\(fmt(w.kcal)) kcal")
+                            .bold()
+                    }
+                    .swipeActions {
+                        Button(role: .destructive) {
+                            Task { await store.deleteWorkout(w.id) }
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                    }
+                }
+            }
+            .navigationTitle("Workout")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showAdd = true
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+            .sheet(isPresented: $showAdd) {
+                AddWorkoutView(date: date)
+            }
+        }
+    }
+}
+
+struct AddWorkoutView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var store: AppStore
+    let date: Date
+
+    @State private var type = "Weight Training"
+    @State private var minutes = ""
+    @State private var kcal = ""
+
+    private let workoutTypes = [
+        "Weight Training", "Running", "Cycling", "Walking", "HIIT",
+        "Swimming", "Yoga", "Sports", "Other"
+    ]
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Picker("Workout", selection: $type) {
+                    ForEach(workoutTypes, id: \.self) { item in
+                        Text(item)
+                    }
+                }
+
+                TextField("Minutes", text: $minutes)
+                    .keyboardType(.decimalPad)
+
+                TextField("Calories burned", text: $kcal)
+                    .keyboardType(.decimalPad)
+            }
+            .navigationTitle("Add Workout")
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        Task {
+                            await store.addWorkout(
+                                type: type,
+                                date: date,
+                                minutes: Double(minutes) ?? 0,
+                                kcal: Double(kcal) ?? 0
+                            )
+                            dismiss()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 struct ProgressViewNative: View { @EnvironmentObject var store:AppStore; var body:some View{NavigationStack{List{HStack{Text("Food kcal");Spacer();Text(fmt(store.foods.reduce(0){$0+$1.calories}))};HStack{Text("Workout burn");Spacer();Text(fmt(store.workouts.reduce(0){$0+$1.kcal}))};HStack{Text("Entries");Spacer();Text("\(store.foods.count)")}}.navigationTitle("Progress")}} }
 
