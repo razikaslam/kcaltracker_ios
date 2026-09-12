@@ -1,0 +1,22 @@
+workflows:
+  ios-native-unsigned:
+    name: KcalTrack iOS (unsigned test build)
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    environment:
+      xcode: 26.5
+    scripts:
+      - name: Validate and build KcalTrack without code signing
+        script: |
+          set -e
+          xcodebuild -list -project "$CM_BUILD_DIR/KcalTrackNative.xcodeproj"
+          xcodebuild build \
+            -project "$CM_BUILD_DIR/KcalTrackNative.xcodeproj" \
+            -scheme "KcalTrackNative" \
+            -sdk iphoneos \
+            -configuration Release \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
+    artifacts:
+      - /Users/builder/Library/Developer/Xcode/DerivedData/**/Build/Products/Release-iphoneos/*.app
+      - /tmp/xcodebuild_logs/*.log
