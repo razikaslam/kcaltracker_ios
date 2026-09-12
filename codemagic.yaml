@@ -8,15 +8,15 @@ workflows:
     scripts:
       - name: Validate and build KcalTrack without code signing
         script: |
-          set -e
+          set -euo pipefail
           xcodebuild -list -project "$CM_BUILD_DIR/KcalTrackNative.xcodeproj"
           xcodebuild build \
             -project "$CM_BUILD_DIR/KcalTrackNative.xcodeproj" \
             -scheme "KcalTrackNative" \
             -sdk iphoneos \
             -configuration Release \
+            -derivedDataPath "$CM_BUILD_DIR/build" \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
     artifacts:
-      - /Users/builder/Library/Developer/Xcode/DerivedData/**/Build/Products/Release-iphoneos/*.app
-      - /tmp/xcodebuild_logs/*.log
+      - $CM_BUILD_DIR/build/Build/Products/Release-iphoneos/*.app

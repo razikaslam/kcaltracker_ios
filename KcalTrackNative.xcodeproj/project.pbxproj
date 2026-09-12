@@ -3,49 +3,52 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A00000010000000100000001 /* KcalTrackNativeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00000020000000200000002 /* KcalTrackNativeApp.swift */; };
-		A00000090000000900000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A00000050000000500000005 /* Assets.xcassets */; };
+		1A0000010000000000000001 /* KcalTrackNativeApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A0000020000000000000002 /* KcalTrackNativeApp.swift */; };
+		1A0000030000000000000003 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1A0000040000000000000004 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A00000020000000200000002 /* KcalTrackNativeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KcalTrackNativeApp.swift; sourceTree = "<group>"; };
-		A00000030000000300000003 /* KcalTrackNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KcalTrackNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		A00000050000000500000005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		A00000060000000600000006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1A0000020000000000000002 /* KcalTrackNativeApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KcalTrackNativeApp.swift; sourceTree = "<group>"; };
+		1A0000050000000000000005 /* KcalTrackNative.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KcalTrackNative.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A0000040000000000000004 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A00000040000000400000004 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (
-		); runOnlyForDeploymentPostprocessing = 0; };
+		1A0000060000000000000006 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A00000070000000700000007 = {
+		1A0000070000000000000007 = {
 			isa = PBXGroup;
 			children = (
-				A00000080000000800000008 /* KcalTrackNative */,
-				A000000A0000000A0000000A /* Products */,
+				1A0000080000000000000008 /* KcalTrackNative */,
+				1A0000090000000000000009 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A00000080000000800000008 /* KcalTrackNative */ = {
+		1A0000080000000000000008 /* KcalTrackNative */ = {
 			isa = PBXGroup;
 			children = (
-				A00000020000000200000002 /* KcalTrackNativeApp.swift */,
-				A00000050000000500000005 /* Assets.xcassets */,
-				A00000060000000600000006 /* Info.plist */,
+				1A0000020000000000000002 /* KcalTrackNativeApp.swift */,
+				1A0000040000000000000004 /* Assets.xcassets */,
 			);
 			path = KcalTrackNative;
 			sourceTree = "<group>";
 		};
-		A000000A0000000A0000000A /* Products */ = {
+		1A0000090000000000000009 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A00000030000000300000003 /* KcalTrackNative.app */,
+				1A0000050000000000000005 /* KcalTrackNative.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -53,13 +56,13 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A000000B0000000B0000000B /* KcalTrackNative */ = {
+		1A00000A000000000000000A /* KcalTrackNative */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A00000140000001400000014 /* Build configuration list for PBXNativeTarget "KcalTrackNative" */;
+			buildConfigurationList = 1A00000F000000000000000F /* Build configuration list for PBXNativeTarget "KcalTrackNative" */;
 			buildPhases = (
-				A000000C0000000C0000000C /* Sources */,
-				A00000040000000400000004 /* Frameworks */,
-				A000000D0000000D0000000D /* Resources */,
+				1A00000B000000000000000B /* Sources */,
+				1A0000060000000000000006 /* Frameworks */,
+				1A00000C000000000000000C /* Resources */,
 			);
 			buildRules = (
 			);
@@ -67,60 +70,59 @@
 			);
 			name = KcalTrackNative;
 			productName = KcalTrackNative;
-			productReference = A00000030000000300000003 /* KcalTrackNative.app */;
+			productReference = 1A0000050000000000000005 /* KcalTrackNative.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A000000E0000000E0000000E /* Project object */ = {
+		1A00000D000000000000000D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftMigration = 2600;
-				LastUpgradeCheck = 2600;
+				LastUpgradeCheck = 1600;
 			};
-			buildConfigurationList = A00000130000001300000013 /* Build configuration list for PBXProject "KcalTrackNative" */;
-			compatibilityVersion = "Xcode 16.0";
+			buildConfigurationList = 1A00000E000000000000000E /* Build configuration list for PBXProject "KcalTrackNative" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = A00000070000000700000007;
-			productRefGroup = A000000A0000000A0000000A /* Products */;
+			mainGroup = 1A0000070000000000000007;
+			productRefGroup = 1A0000090000000000000009 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A000000B0000000B0000000B /* KcalTrackNative */,
+				1A00000A000000000000000A /* KcalTrackNative */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A000000D0000000D0000000D /* Resources */ = {
+		1A00000C000000000000000C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A00000090000000900000009 /* Assets.xcassets in Resources */,
+				1A0000030000000000000003 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A000000C0000000C0000000C /* Sources */ = {
+		1A00000B000000000000000B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A00000010000000100000001 /* KcalTrackNativeApp.swift in Sources */,
+				1A0000010000000000000001 /* KcalTrackNativeApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		A00000150000001500000015 /* Debug */ = {
+		1A0000100000000000000010 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -129,7 +131,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = KcalTrackNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -139,7 +140,7 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 		};
-		A00000160000001600000016 /* Release */ = {
+		1A0000110000000000000011 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -148,7 +149,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = KcalTrackNative/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -158,44 +158,42 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 		};
-		A00000170000001700000017 /* Project Debug */ = {
+		1A0000120000000000000012 /* Project Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				SWIFT_VERSION = 5.0;
 			};
 		};
-		A00000180000001800000018 /* Project Release */ = {
+		1A0000130000000000000013 /* Project Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ENABLE_MODULES = YES;
-				SWIFT_VERSION = 5.0;
 			};
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A00000140000001400000014 /* Build configuration list for PBXNativeTarget "KcalTrackNative" */ = {
+		1A00000E000000000000000E /* Build configuration list for PBXProject "KcalTrackNative" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A00000150000001500000015 /* Debug */,
-				A00000160000001600000016 /* Release */,
+				1A0000120000000000000012 /* Project Debug */,
+				1A0000130000000000000013 /* Project Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A00000130000001300000013 /* Build configuration list for PBXProject "KcalTrackNative" */ = {
+		1A00000F000000000000000F /* Build configuration list for PBXNativeTarget "KcalTrackNative" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A00000170000001700000017 /* Project Debug */,
-				A00000180000001800000018 /* Project Release */,
+				1A0000100000000000000010 /* Debug */,
+				1A0000110000000000000011 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = A000000E0000000E0000000E /* Project object */;
+	rootObject = 1A00000D000000000000000D /* Project object */;
 }
