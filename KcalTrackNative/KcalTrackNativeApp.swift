@@ -319,27 +319,51 @@ struct HomeView: View {
     var body: some View {
         ScrollView { VStack(spacing:14) { Picker("",selection:$period){Text("Day").tag("day");Text("Week").tag("week");Text("Month").tag("month")}.pickerStyle(.segmented)
             let d=periodData(period)
+            let multiplier=periodMultiplier(period)
             SummaryCard(title:"Calories",value:fmt(d.kcal),target:fmt(targetCalories(period)),unit:"kcal",left:max(0,targetCalories(period)-d.kcal))
-            MacroCard(data:d)
+            MacroCard(data:d, multiplier: multiplier)
             SummaryCard(title:"Workout Burn",value:fmt(d.burn),target:fmt(targetWorkout(period)),unit:"kcal",left:max(0,targetWorkout(period)-d.burn))
             WeightCard()
         }.padding() }
         .navigationTitle("\(greeting())")
     }
+
+    private func mondayStart(_ date: Date) -> Date {
+        let cal = Calendar.current
+        let dayStart = cal.startOfDay(for: date)
+        let weekday = cal.component(.weekday, from: dayStart) // Sunday=1 ... Saturday=7
+        let daysFromMonday = (weekday + 5) % 7
+        return cal.date(byAdding: .day, value: -daysFromMonday, to: dayStart)!
+    }
+
     func periodData(_ p:String)->(kcal:Double,protein:Double,carbs:Double,fat:Double,fiber:Double,burn:Double){
-        let start:Date; let now=Date(); let cal=Calendar.current
-        if p=="day"{start=cal.startOfDay(for:now)} else if p=="week"{ start=cal.dateInterval(of:.weekOfYear,for:now)!.start } else {start=cal.dateInterval(of:.month,for:now)!.start}
-        let f=store.foods.filter{$0.date>=start && $0.date<=now}; let w=store.workouts.filter{$0.date>=start && $0.date<=now}
+        let now=Date(); let cal=Calendar.current
+        let start: Date
+        if p=="day" { start=cal.startOfDay(for:now) }
+        else if p=="week" { start=mondayStart(now) }
+        else { start=cal.dateInterval(of:.month,for:now)!.start }
+        let f=store.foods.filter{$0.date>=start && $0.date<=now}
+        let w=store.workouts.filter{$0.date>=start && $0.date<=now}
         return (f.reduce(0){$0+$1.calories},f.reduce(0){$0+$1.protein},f.reduce(0){$0+$1.carbs},f.reduce(0){$0+$1.fat},f.reduce(0){$0+$1.fiber},w.reduce(0){$0+$1.kcal})
     }
-    func days(_ p:String)->Double{let cal=Calendar.current;let now=Date();if p=="day"{return 1};if p=="week"{return 7};return Double(cal.dateComponents([.day],from:cal.dateInterval(of:.month,for:now)!.start,to:now).day!+1)}
-    func targetCalories(_ p:String)->Double{store.profile.calorieTarget*days(p)}
-    func targetWorkout(_ p:String)->Double{p=="day" ? store.profile.workoutTarget : p=="week" ? store.profile.workoutTarget*4 : store.profile.workoutTarget*(4.0/7.0)*days(p)}
+
+    func days(_ p:String)->Double{
+        let cal=Calendar.current
+        let now=Date()
+        if p=="day"{return 1}
+        if p=="week"{return 7}
+        return Double(cal.range(of:.day,in:.month,for:now)!.count)
+    }
+    func periodMultiplier(_ p:String)->Double{ days(p) }
+    func targetCalories(_ p:String)->Double{ store.profile.calorieTarget*days(p) }
+    func targetWorkout(_ p:String)->Double{
+        p=="day" ? store.profile.workoutTarget : p=="week" ? store.profile.workoutTarget*4 : store.profile.workoutTarget*(4.0/7.0)*days(p)
+    }
     func greeting()->String{let h=Calendar.current.component(.hour,from:Date());let t=h<12 ? "Morning" : h<17 ? "Afternoon" : "Evening";return "Good \(t), \(store.profile.name.isEmpty ? "there" : store.profile.name)"}
 }
 
 struct SummaryCard: View { let title:String; let value:String; let target:String; let unit:String; let left:Double; var body: some View { VStack(spacing:8){Text(title).font(.headline); Text("\(value) / \(target) \(unit)").font(.system(size:30,weight:.bold,design:.rounded)); Text("\(fmt(left)) \(unit) left").foregroundStyle(.green)}.frame(maxWidth:.infinity).padding().background(.thinMaterial).clipShape(RoundedRectangle(cornerRadius:18)) } }
-struct MacroCard: View { let data:(kcal:Double,protein:Double,carbs:Double,fat:Double,fiber:Double,burn:Double); @EnvironmentObject var store:AppStore; var body: some View{VStack{HStack{MacroCell(name:"Protein",v:data.protein,t:store.profile.proteinTarget);MacroCell(name:"Carbs",v:data.carbs,t:store.profile.carbTarget);MacroCell(name:"Fat",v:data.fat,t:store.profile.fatTarget);MacroCell(name:"Fiber",v:data.fiber,t:store.profile.fiberTarget)}}.padding().background(.thinMaterial).clipShape(RoundedRectangle(cornerRadius:18))} }
+struct MacroCard: View { let data:(kcal:Double,protein:Double,carbs:Double,fat:Double,fiber:Double,burn:Double); let multiplier:Double; @EnvironmentObject var store:AppStore; var body: some View{VStack{HStack{MacroCell(name:"Protein",v:data.protein,t:store.profile.proteinTarget*multiplier);MacroCell(name:"Carbs",v:data.carbs,t:store.profile.carbTarget*multiplier);MacroCell(name:"Fat",v:data.fat,t:store.profile.fatTarget*multiplier);MacroCell(name:"Fiber",v:data.fiber,t:store.profile.fiberTarget*multiplier)}}.padding().background(.thinMaterial).clipShape(RoundedRectangle(cornerRadius:18))} }
 struct MacroCell: View {let name:String;let v:Double;let t:Double;var body:some View{VStack{Text(fmt(v)).font(.headline);Text("/ \(fmt(t)) g").font(.caption).foregroundStyle(.secondary);Text(name).font(.caption)}}}
 struct WeightCard: View {@EnvironmentObject var store:AppStore;var body:some View{HStack{VStack(alignment:.leading){Text("Current Weight").foregroundStyle(.secondary);Text("\(store.profile.currentWeight, specifier:"%.1f") kg").font(.title3.bold())};Spacer();Image(systemName:"chart.line.uptrend.xyaxis").foregroundStyle(.green)}.padding().background(.thinMaterial).clipShape(RoundedRectangle(cornerRadius:18))}}
 
@@ -531,7 +555,100 @@ struct AddWorkoutView: View {
     }
 }
 
-struct ProgressViewNative: View { @EnvironmentObject var store:AppStore; var body:some View{NavigationStack{List{HStack{Text("Food kcal");Spacer();Text(fmt(store.foods.reduce(0){$0+$1.calories}))};HStack{Text("Workout burn");Spacer();Text(fmt(store.workouts.reduce(0){$0+$1.kcal}))};HStack{Text("Entries");Spacer();Text("\(store.foods.count)")}}.navigationTitle("Progress")}} }
+struct ProgressViewNative: View {
+    @EnvironmentObject var store: AppStore
+    @State private var period = "week"
+
+    var body: some View {
+        NavigationStack {
+            let d = periodData(period)
+            List {
+                Picker("Period", selection: $period) {
+                    Text("Week").tag("week")
+                    Text("Month").tag("month")
+                    Text("3 Months").tag("3months")
+                }
+                .pickerStyle(.segmented)
+                .listRowInsets(EdgeInsets())
+
+                Section("Summary") {
+                    HStack { Text("Avg. Daily Intake"); Spacer(); Text(fmt(d.avgIntake)) }
+                    HStack { Text("Avg. Daily Burn"); Spacer(); Text(fmt(d.avgBurn)) }
+                    HStack { Text("Food kcal"); Spacer(); Text(fmt(d.kcal)) }
+                    HStack { Text("Workout burn"); Spacer(); Text(fmt(d.burn)) }
+                    HStack { Text("Net kcal"); Spacer(); Text(fmt(d.kcal - d.burn)) }
+                    HStack { Text("Workout target"); Spacer(); Text(fmt(d.workoutTarget)) }
+                    HStack { Text("Workout progress"); Spacer(); Text("\(fmt(d.burn / max(d.workoutTarget, 1) * 100))%") }
+                    HStack { Text("Food entries"); Spacer(); Text("\(d.foodCount)") }
+                    HStack { Text("Workout sessions"); Spacer(); Text("\(d.workoutCount)") }
+                }
+            }
+            .navigationTitle("Progress")
+        }
+    }
+
+    private func mondayStart(_ date: Date) -> Date {
+        let cal = Calendar.current
+        let dayStart = cal.startOfDay(for: date)
+        let weekday = cal.component(.weekday, from: dayStart)
+        let daysFromMonday = (weekday + 5) % 7
+        return cal.date(byAdding: .day, value: -daysFromMonday, to: dayStart)!
+    }
+
+    private func fullMonthEnd(_ date: Date) -> Date {
+        let cal = Calendar.current
+        let start = cal.dateInterval(of: .month, for: date)!.start
+        return cal.date(byAdding: .month, value: 1, to: start)!
+    }
+
+    private func periodData(_ p: String) -> (kcal: Double, burn: Double, foodCount: Int, workoutCount: Int, avgIntake: Double, avgBurn: Double, workoutTarget: Double) {
+        let cal = Calendar.current
+        let now = Date()
+        let todayStart = cal.startOfDay(for: now)
+        let start: Date
+        let end: Date
+        let targetDays: Double
+        let elapsedDays: Double
+
+        switch p {
+        case "week":
+            start = mondayStart(now)
+            end = cal.date(byAdding: .day, value: 7, to: start)!
+            targetDays = 7
+            elapsedDays = Double(max(1, cal.dateComponents([.day], from: start, to: todayStart).day! + 1))
+        case "month":
+            start = cal.dateInterval(of: .month, for: now)!.start
+            end = fullMonthEnd(now)
+            targetDays = Double(cal.range(of: .day, in: .month, for: now)!.count)
+            elapsedDays = Double(max(1, cal.dateComponents([.day], from: start, to: todayStart).day! + 1))
+        default:
+            start = cal.date(byAdding: .day, value: -89, to: todayStart)!
+            end = cal.date(byAdding: .day, value: 1, to: todayStart)!
+            targetDays = 90
+            elapsedDays = 90
+        }
+
+        let foods = store.foods.filter { $0.date >= start && $0.date < end }
+        let workouts = store.workouts.filter { $0.date >= start && $0.date < end }
+        let kcal = foods.reduce(0) { $0 + $1.calories }
+        let burn = workouts.reduce(0) { $0 + $1.kcal }
+        let workoutTarget: Double
+        if p == "week" {
+            workoutTarget = store.profile.workoutTarget * 4
+        } else {
+            workoutTarget = store.profile.workoutTarget * (4.0 / 7.0) * targetDays
+        }
+        return (
+            kcal,
+            burn,
+            foods.count,
+            workouts.count,
+            kcal / max(elapsedDays, 1),
+            burn / max(elapsedDays, 1),
+            workoutTarget
+        )
+    }
+}
 
 struct ProfileView: View { @EnvironmentObject var store:AppStore; @State private var draft=Profile(); @State private var first=true; var body:some View{NavigationStack{Form{Section("Profile"){TextField("Name",text:$draft.name);Stepper("Age: \(draft.age)",value:$draft.age,in:1...120);TextField("Height (cm)",value:$draft.height,format:.number).keyboardType(.decimalPad);TextField("Current weight (kg)",value:$draft.currentWeight,format:.number).keyboardType(.decimalPad);TextField("Goal weight (kg)",value:$draft.goalWeight,format:.number).keyboardType(.decimalPad)};Section("Targets"){TextField("Calories",value:$draft.calorieTarget,format:.number).keyboardType(.decimalPad);TextField("Protein",value:$draft.proteinTarget,format:.number).keyboardType(.decimalPad);TextField("Carbs",value:$draft.carbTarget,format:.number).keyboardType(.decimalPad);TextField("Fat",value:$draft.fatTarget,format:.number).keyboardType(.decimalPad);TextField("Fiber",value:$draft.fiberTarget,format:.number).keyboardType(.decimalPad);TextField("Workout burn",value:$draft.workoutTarget,format:.number).keyboardType(.decimalPad)};Button("Save profile"){Task{await store.saveProfile(draft)}};Button("Sign Out",role:.destructive){store.signOut()}}.navigationTitle("More").onAppear{if first{draft=store.profile;first=false}}}} }
 
